@@ -49,7 +49,7 @@ const Projects = () => {
     {
       title: 'E-Commerce Frontend',
       description: 'Responsive frontend for an online store with product listings, cart, filters, and checkout.',
-      image: 'https://i.pinimg.com/736x/8d/02/39/8d0239697ffc0840e7e19d5356a8228c.jpg',
+      image: 'https://i.pinimg.com/736x/e8/a9/bc/e8a9bc4846cc4a709ec0859572d8cbd8.jpg',
       technologies: ['React', 'Redux', 'Styled Components', 'Tailwind CSS'],
       liveUrl: 'https://github.com/ipushpendra1/Frontend-e-commerce-',
       githubUrl: 'https://github.com/ipushpendra1/Frontend-e-commerce-',
