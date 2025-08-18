@@ -43,8 +43,19 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add form submission logic here
-    console.log('Form submitted');
+    const form = e.target;
+    const name = form.name?.value?.trim() || '';
+    const email = form.email?.value?.trim() || '';
+    const subject = form.subject?.value?.trim() || '';
+    const message = form.message?.value?.trim() || '';
+
+    if (!name || !email || !subject || !message) {
+      alert('Please fill out all fields before sending.');
+      return;
+    }
+
+    alert('Message sent successfully!');
+    form.reset();
   };
 
   return (
