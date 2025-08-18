@@ -108,6 +108,8 @@
 .social-icon {
   font-size: 1.5rem;
   color: inherit;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .social-name {

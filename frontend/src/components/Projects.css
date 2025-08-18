@@ -97,7 +97,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(26, 115, 232, 0.95) 0%, rgba(21, 87, 176, 0.95) 100%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,12 +107,14 @@
 
 @media (prefers-color-scheme: dark) {
   .project-overlay {
-    background: linear-gradient(135deg, rgba(138, 180, 248, 0.95) 0%, rgba(174, 203, 250, 0.95) 100%);
+    background: transparent;
   }
 }
 
 .project-card:hover .project-overlay {
   opacity: 1;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 .project-links {

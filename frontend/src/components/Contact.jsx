@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useSmoothAnimation, useStaggeredAnimation } from '../hooks/useSmoothAnimation';
 import 'devicon/devicon.min.css';
+import { Linkedin, Instagram } from 'lucide-react';
 
 const Contact = () => {
   const contactRef = useRef(null);
@@ -20,7 +21,7 @@ const Contact = () => {
     {
       name: 'LinkedIn',
       url: 'https://www.linkedin.com/in/pushpendra-kumar-a92302257/',
-      icon: 'devicon-linkedin-original'
+      iconComponent: Linkedin
     },
     {
       name: 'Twitter',
@@ -31,7 +32,13 @@ const Contact = () => {
       name: 'Email',
       url: 'mailto:pushpendra090804@gmail.com',
       icon: 'devicon-google-original'
+    },
+    {
+      name: 'Instagram',
+      url: 'https://www.instagram.com/_ipushpendra/',
+      iconComponent: Instagram
     }
+
   ];
 
   const handleSubmit = (e) => {
@@ -75,7 +82,11 @@ const Contact = () => {
                 rel="noopener noreferrer"
                 className={`social-link fade-in animate stagger-${index + 3} hover-lift hover-glow`}
               >
-                <i className={`${link.icon} social-icon`}></i>
+                {link.iconComponent ? (
+                  <link.iconComponent className="social-icon" size={20} />
+                ) : (
+                  <i className={`${link.icon} social-icon`}></i>
+                )}
                 <span className="social-name">{link.name}</span>
               </a>
             ))}
@@ -108,6 +119,7 @@ const Contact = () => {
               className="form-input hover-glow"
             />
           </div>
+          
 
           <div className="form-group fade-in stagger-3">
             <label htmlFor="subject">Subject</label>

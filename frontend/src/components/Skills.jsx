@@ -81,10 +81,6 @@ const Skills = () => {
       icon: 'devicon-java-plain'
     },
     {
-      name: 'DSA',
-      icon: 'devicon-cplusplus-plain'
-    },
-    {
       name: 'Cursor AI',
       icon: 'custom-cursor',
       customIcon: (

@@ -3,18 +3,17 @@ import { useSmoothAnimation, useStaggeredAnimation } from '../hooks/useSmoothAni
 
 const About = () => {
   const aboutRef = useRef(null);
-  const imageRef = useRef(null);
   
   // Smooth animations
   const titleRef = useSmoothAnimation({ threshold: 0.3 });
   const descriptionRef = useSmoothAnimation({ threshold: 0.3, animationClass: 'animate' });
+  const descriptionRef2 = useSmoothAnimation({ threshold: 0.3, animationClass: 'animate' });
   const statsRef = useStaggeredAnimation([], { threshold: 0.3, staggerDelay: 0.15 });
   const imageRefAnimated = useSmoothAnimation({ threshold: 0.3, animationClass: 'animate' });
 
   const stats = [
-    { number: '3+', label: 'Years Experience' },
-    { number: '50+', label: 'Projects Completed' },
-    { number: '100%', label: 'Client Satisfaction' },
+    { number: '1.7+', label: 'Years of Experience' },
+    { number: '20+', label: 'Projects (minor & major)' },
     { number: '24/7', label: 'Support Available' }
   ];
 
@@ -37,7 +36,10 @@ const About = () => {
             web technologies, I bring ideas to life through clean code and innovative solutions.
           </p>
           
-          <p className="about-description fade-in stagger-2">
+          <p 
+            ref={descriptionRef2}
+            className="about-description fade-in stagger-2"
+          >
             My journey in web development started with curiosity and has evolved into 
             a passion for building applications that make a difference. I believe in 
             writing maintainable code, following best practices, and staying updated 
@@ -63,7 +65,7 @@ const About = () => {
         <div className="about-image">
           <img 
             ref={imageRefAnimated}
-            src="/profile1.png"
+            src="/profile2.png"
             alt="Profile"
             className="profile-image scale-in hover-scale"
             onError={(e) => {

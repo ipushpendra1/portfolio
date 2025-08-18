@@ -13,7 +13,7 @@ const Projects = () => {
     {
       title: 'Social Media FullStack',
       description: 'Full-stack social media platform with authentication, posts, comments, likes, and real-time interactions.',
-      image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop',
+      image: 'https://images.unsplash.com/photo-1698512144620-b587a49cee5b?q=80&w=1334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       technologies: ['MongoDB', 'Express', 'React', 'Node.js', 'JWT', 'Socket.io'],
       liveUrl: 'https://github.com/ipushpendra1/Social-Media-fullStack',
       githubUrl: 'https://github.com/ipushpendra1/Social-Media-fullStack',
@@ -22,7 +22,7 @@ const Projects = () => {
     {
       title: 'Music Stream FullStack',
       description: 'Music streaming app with search, playlists, and media playback capabilities.',
-      image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop',
+      image: 'https://images.unsplash.com/photo-1602454008298-6372cf149759?q=80&w=1196&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       technologies: ['MERN', 'REST APIs', 'Cloudinary', 'Tailwind CSS'],
       liveUrl: 'https://github.com/ipushpendra1/Music-Stream-Fullstack',
       githubUrl: 'https://github.com/ipushpendra1/Music-Stream-Fullstack',
@@ -31,7 +31,16 @@ const Projects = () => {
     {
       title: 'LuxMall 3D World',
       description: 'A 3D e-commerce mall where users can browse products in an immersive environment.',
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
+      image: 'https://i.pinimg.com/736x/e2/9c/f1/e29cf14f10f48e891b795819c44b75f6.jpg',
+      technologies: ['React', 'Three.js', 'WebGL', 'Node.js', 'MongoDB'],
+      liveUrl: 'https://github.com/ipushpendra1/LuxMall-3D-World-',
+      githubUrl: 'https://github.com/ipushpendra1/LuxMall-3D-World-',
+      featured: true
+    },
+    {
+      title: 'Planets-in-3D',
+      description: 'Three.js-based interactive solar system showcasing orbiting planets with realistic textures, lighting, and animations.',
+      image: 'https://i.pinimg.com/736x/09/c8/52/09c852a8e15012d364e5ca45dddf1719.jpg',
       technologies: ['React', 'Three.js', 'WebGL', 'Node.js', 'MongoDB'],
       liveUrl: 'https://github.com/ipushpendra1/LuxMall-3D-World-',
       githubUrl: 'https://github.com/ipushpendra1/LuxMall-3D-World-',
@@ -40,7 +49,7 @@ const Projects = () => {
     {
       title: 'E-Commerce Frontend',
       description: 'Responsive frontend for an online store with product listings, cart, filters, and checkout.',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop',
+      image: 'https://i.pinimg.com/736x/8d/02/39/8d0239697ffc0840e7e19d5356a8228c.jpg',
       technologies: ['React', 'Redux', 'Styled Components', 'Tailwind CSS'],
       liveUrl: 'https://github.com/ipushpendra1/Frontend-e-commerce-',
       githubUrl: 'https://github.com/ipushpendra1/Frontend-e-commerce-',
