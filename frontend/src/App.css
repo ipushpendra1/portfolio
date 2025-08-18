@@ -282,4 +282,10 @@ a:hover {
     opacity: 1;
   }
 }
+
+/* Brand font utility for highlighted text (navbar logo, name, etc.) */
+.brand-font {
+  font-family: 'Syne', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  letter-spacing: 0.5px;
+}
     

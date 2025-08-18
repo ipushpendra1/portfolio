@@ -63,7 +63,7 @@ const About = () => {
         <div className="about-image">
           <img 
             ref={imageRefAnimated}
-            src="/profile.jpg"
+            src="/profile1.png"
             alt="Profile"
             className="profile-image scale-in hover-scale"
             onError={(e) => {

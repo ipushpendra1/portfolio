@@ -5,6 +5,7 @@ const Navbar = () => {
   const navbarRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   const navLinks = [
     { href: '#home', label: 'Home' },
@@ -35,9 +36,50 @@ const Navbar = () => {
         top: elementPosition,
         behavior: 'smooth'
       });
+      // Optimistically set active section immediately on click
+      const id = href.startsWith('#') ? href.slice(1) : href;
+      setActiveSection(id);
     }
     setIsMenuOpen(false);
   };
+
+  // Observe sections to highlight current nav item
+  useEffect(() => {
+    const sections = navLinks
+      .map(link => document.querySelector(link.href))
+      .filter(Boolean);
+
+    if (sections.length === 0) return;
+
+    let mostVisibleId = activeSection;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Choose the entry with highest intersection ratio
+        let highest = 0;
+        let currentId = mostVisibleId;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= highest) {
+            highest = entry.intersectionRatio;
+            currentId = entry.target.id;
+          }
+        });
+        if (currentId && currentId !== mostVisibleId) {
+          mostVisibleId = currentId;
+          setActiveSection(currentId);
+        }
+      },
+      {
+        root: null,
+        // Focus around viewport center to determine active section
+        rootMargin: '-40% 0px -40% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1]
+      }
+    );
+
+    sections.forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <nav 
@@ -49,6 +91,7 @@ const Navbar = () => {
           <a 
             href="#home" 
             onClick={() => scrollToSection('#home')}
+            className="brand-font"
           >
             Pushpendra
           </a>
@@ -63,7 +106,7 @@ const Navbar = () => {
                 e.preventDefault();
                 scrollToSection(link.href);
               }}
-              className={`nav-link fade-in animate stagger-${index + 1}`}
+              className={`nav-link fade-in animate stagger-${index + 1} ${activeSection === link.href.slice(1) ? 'active' : ''}`}
             >
               {link.label}
             </a>

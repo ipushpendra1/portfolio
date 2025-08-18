@@ -99,7 +99,7 @@
 }
 
 .social-link:hover {
-  /* background: var(--accent-color); */
+  background: var(--accent-color);
   color: white;
   transform: translateY(-3px);
   box-shadow: 0 4px 8px var(--shadow-medium);

@@ -106,6 +106,15 @@
   transform: translateY(-2px);
 }
 
+/* Active link state */
+.nav-link.active {
+  color: var(--accent-color);
+}
+.nav-link.active::after {
+  width: 80%;
+  background: var(--accent-color);
+}
+
 /* Nav Actions */
 .nav-actions {
   display: flex;

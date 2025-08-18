@@ -199,6 +199,17 @@
   }
 }
 
+/* Interactive Canvas overlay */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: auto; /* enable mouse interaction */
+
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .hero-title {
