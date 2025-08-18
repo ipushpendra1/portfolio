@@ -21,7 +21,12 @@ const Hero = () => {
     const projectsSection = document.getElementById('projects');
     if (projectsSection) {
       const top = projectsSection.offsetTop - navbarHeight;
-      window.scrollTo({ top, behavior: 'auto' });
+      window.scrollTo({ top, behavior: 'smooth' });
+      try {
+        window.history.pushState(null, '', '/projects');
+      } catch (_) {
+        // ignore
+      }
     }
   };
 

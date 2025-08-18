@@ -59,12 +59,16 @@ const Projects = () => {
 
   const scrollToContact = (e) => {
     e.preventDefault();
+    const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 80;
     const contactSection = document.getElementById('contact');
     if (contactSection) {
-      contactSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
+      const top = contactSection.offsetTop - navbarHeight;
+      window.scrollTo({ top, behavior: 'smooth' });
+      try {
+        window.history.pushState(null, '', '/contact');
+      } catch {
+        // ignore
+      }
     }
   };
 

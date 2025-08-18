@@ -1,19 +1,32 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const navbarRef = useRef(null);
+  const isNavigatingRef = useRef(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
   const navLinks = [
-    { href: '#home', label: 'Home' },
-    { href: '#about', label: 'About' },
-    { href: '#skills', label: 'Skills' },
-    { href: '#projects', label: 'Projects' },
-    { href: '#contact', label: 'Contact' }
+    { id: 'home', path: '/home', label: 'Home' },
+    { id: 'about', path: '/about', label: 'About' },
+    { id: 'skills', path: '/skills', label: 'Skills' },
+    { id: 'projects', path: '/projects', label: 'Projects' },
+    { id: 'contact', path: '/contact', label: 'Contact' }
   ];
+
+  const getSectionIdFromTarget = useCallback((target) => {
+    if (!target) return 'home';
+    if (typeof target === 'string') {
+      if (target.startsWith('#')) return target.slice(1);
+      if (target.startsWith('/')) return target.replace(/^\//, '') || 'home';
+      return target;
+    }
+    return 'home';
+  }, []);
+
+  const getPathFromSectionId = useCallback((id) => `/${id || 'home'}`,[ ]);
 
   // Handle scroll effect
   useEffect(() => {
@@ -26,8 +39,10 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (href) => {
-    const element = document.querySelector(href);
+  const scrollToSection = useCallback((target, options = {}) => {
+    const { updateHistory = true } = options;
+    const sectionId = getSectionIdFromTarget(target);
+    const element = document.getElementById(sectionId);
     if (element) {
       const navbarHeight = navbarRef.current?.offsetHeight || 80;
       const elementPosition = element.offsetTop - navbarHeight;
@@ -36,17 +51,23 @@ const Navbar = () => {
         top: elementPosition,
         behavior: 'smooth'
       });
-      // Optimistically set active section immediately on click
-      const id = href.startsWith('#') ? href.slice(1) : href;
-      setActiveSection(id);
+      // Optimistically set active section immediately on click and update URL path
+      setActiveSection(sectionId);
+      if (updateHistory) {
+        try {
+          window.history.pushState(null, '', getPathFromSectionId(sectionId));
+        } catch {
+          // ignore
+        }
+      }
     }
     setIsMenuOpen(false);
-  };
+  }, [getSectionIdFromTarget, getPathFromSectionId]);
 
   // Observe sections to highlight current nav item
   useEffect(() => {
     const sections = navLinks
-      .map(link => document.querySelector(link.href))
+      .map(link => document.getElementById(link.id))
       .filter(Boolean);
 
     if (sections.length === 0) return;
@@ -81,6 +102,53 @@ const Navbar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Keep URL path in sync with the active section while scrolling
+  useEffect(() => {
+    if (!activeSection) return;
+    if (isNavigatingRef.current) return;
+    try {
+      window.history.replaceState(null, '', getPathFromSectionId(activeSection));
+    } catch {
+      // ignore
+    }
+  }, [activeSection, getPathFromSectionId]);
+
+  // On initial load, if there's a path, scroll to it; default '/' -> '/home'
+  useEffect(() => {
+    const { pathname } = window.location;
+    const initialId = pathname === '/' ? 'home' : pathname.replace(/^\//, '') || 'home';
+    // Normalize to clean path
+    try {
+      const normalizedPath = getPathFromSectionId(initialId);
+      if (pathname !== normalizedPath) {
+        window.history.replaceState(null, '', normalizedPath);
+      }
+    } catch {
+      // ignore
+    }
+    isNavigatingRef.current = true;
+    setActiveSection(initialId);
+    setTimeout(() => {
+      scrollToSection(initialId, { updateHistory: false });
+      isNavigatingRef.current = false;
+    }, 0);
+  }, [getPathFromSectionId, scrollToSection]);
+
+  // Handle back/forward navigation for path changes
+  useEffect(() => {
+    const onPopState = () => {
+      const { pathname } = window.location;
+      const id = pathname === '/' ? 'home' : pathname.replace(/^\//, '') || 'home';
+      isNavigatingRef.current = true;
+      scrollToSection(id, { updateHistory: false });
+      setActiveSection(id);
+      // Clear flag shortly after to allow future updates
+      setTimeout(() => { isNavigatingRef.current = false; }, 0);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [scrollToSection]);
+
   return (
     <nav 
       ref={navbarRef} 
@@ -89,8 +157,8 @@ const Navbar = () => {
       <div className="nav-container">
         <div className="nav-logo">
           <a 
-            href="#home" 
-            onClick={() => scrollToSection('#home')}
+            href="/home" 
+            onClick={(e) => { e.preventDefault(); scrollToSection('/home'); }}
             className="brand-font"
           >
             Pushpendra
@@ -101,12 +169,12 @@ const Navbar = () => {
           {navLinks.map((link, index) => (
             <a
               key={index}
-              href={link.href}
+              href={link.path}
               onClick={(e) => {
                 e.preventDefault();
-                scrollToSection(link.href);
+                scrollToSection(link.path);
               }}
-              className={`nav-link fade-in animate stagger-${index + 1} ${activeSection === link.href.slice(1) ? 'active' : ''}`}
+              className={`nav-link fade-in animate stagger-${index + 1} ${activeSection === link.id ? 'active' : ''}`}
             >
               {link.label}
             </a>
