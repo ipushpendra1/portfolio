@@ -1,10 +1,16 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSmoothAnimation, useStaggeredAnimation } from '../hooks/useSmoothAnimation';
 import 'devicon/devicon.min.css';
 import { Linkedin, Instagram } from 'lucide-react';
+import OtpModal from './OtpModal';
 
 const Contact = () => {
   const contactRef = useRef(null);
+  const [awaitingOtp, setAwaitingOtp] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState(null);
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
   
   // Smooth animations
   const titleRef = useSmoothAnimation({ threshold: 0.3 });
@@ -41,7 +47,7 @@ const Contact = () => {
 
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name?.value?.trim() || '';
@@ -54,8 +60,116 @@ const Contact = () => {
       return;
     }
 
-    alert('Message sent successfully!');
-    form.reset();
+    // Step 1: Generate OTP
+    try {
+      setIsGenerating(true);
+      const response = await fetch(`${API_BASE_URL}/generate-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error?.error || error?.message || 'Failed to generate OTP');
+      }
+
+      setPendingPayload({
+        Name: name,
+        Email: email,
+        Subject: subject,
+        Message: message
+      });
+      setAwaitingOtp(true);
+    } catch (err) {
+      alert(err.message || 'Could not send OTP. Please try again later.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleVerifyAndSend = async (providedOtp) => {
+    if (!awaitingOtp || !pendingPayload) return;
+    const otp = (providedOtp ?? '').trim();
+    if (!otp || otp.length !== 6) {
+      alert('Please enter the 6-digit OTP.');
+      return;
+    }
+
+    try {
+      setIsVerifying(true);
+      // Step 2: Verify OTP
+      const verifyRes = await fetch(`${API_BASE_URL}/verify-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: pendingPayload.Email,
+          otp
+        })
+      });
+
+      if (!verifyRes.ok) {
+        const error = await verifyRes.json().catch(() => ({}));
+        throw new Error(error?.error || error?.message || 'OTP verification failed');
+      }
+
+      // Step 3: Send the message after successful OTP verification
+      const sendRes = await fetch(`${API_BASE_URL}/send-message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pendingPayload)
+      });
+
+      if (!sendRes.ok) {
+        const error = await sendRes.json().catch(() => ({}));
+        throw new Error(error?.message || 'Failed to send message');
+      }
+
+      alert('Message sent successfully!');
+      // Reset state
+      setAwaitingOtp(false);
+      setPendingPayload(null);
+
+      // Best effort: clear the form fields if still mounted
+      if (contactRef?.current) {
+        const form = contactRef.current.querySelector('form');
+        form && form.reset && form.reset();
+      }
+    } catch (err) {
+      alert(err.message || 'Something went wrong. Please try again later.');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!pendingPayload) return;
+    try {
+      setIsGenerating(true);
+      const response = await fetch(`${API_BASE_URL}/generate-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingPayload.Email })
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error?.error || error?.message || 'Failed to resend OTP');
+      }
+      return true;
+    } catch (err) {
+      alert(err.message || 'Could not resend OTP.');
+      return false;
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -154,14 +268,29 @@ const Contact = () => {
             ></textarea>
           </div>
 
-          <button 
-            type="submit" 
-            className="submit-button fade-in stagger-5 hover-lift hover-glow"
-          >
-            Send Message
-          </button>
+          {!awaitingOtp && (
+            <button 
+              type="submit" 
+              className="submit-button fade-in stagger-5 hover-lift hover-glow"
+              disabled={isGenerating}
+            >
+              {isGenerating ? 'Sending OTP...' : 'Send Message'}
+            </button>
+          )}
+
+          {awaitingOtp && null}
         </form>
       </div>
+      <OtpModal
+        isOpen={awaitingOtp}
+        email={pendingPayload?.Email}
+        loadingVerify={isVerifying}
+        loadingResend={isGenerating}
+        initialSeconds={60}
+        onSubmit={(otp) => handleVerifyAndSend(otp)}
+        onResend={handleResendOtp}
+        onCancel={() => { setAwaitingOtp(false); setPendingPayload(null); }}
+      />
     </section>
   );
 };

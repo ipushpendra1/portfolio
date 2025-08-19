@@ -5,6 +5,7 @@
 @import './components/Skills.css';
 @import './components/Projects.css';
 @import './components/Contact.css';
+@import './components/OtpModal.css';
 
 /* Additional global styles can be added here if needed */
 /* Base and Common Styles (inlined from former Base.css) */
