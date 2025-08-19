@@ -1,12 +1,13 @@
-import express from 'express';
-const app = express();
-import messageRoutes from './src/routes/message.routes.js';
+import express from "express";
+import messageRoutes from "./src/routes/message.routes.js";
+import otpRoutes from "./src/routes/otpRoutes.js";
 
+const app = express();
 
 app.use(express.json());
-app.use('/', messageRoutes);
 
-
-
+// routes
+app.use("/", messageRoutes);
+app.use("/", otpRoutes);
 
 export default app;
