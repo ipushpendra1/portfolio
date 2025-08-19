@@ -5,7 +5,20 @@ import otpRoutes from "./routes/otpRoutes.js";
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  "https://ipushpendra.netlify.app/",
+  "http://localhost:5173"
+];
+
+const corsOptions = {
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 // routes

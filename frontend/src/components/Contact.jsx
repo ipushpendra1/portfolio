@@ -10,7 +10,11 @@ const Contact = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [pendingPayload, setPendingPayload] = useState(null);
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_BASE_URL =
+    import.meta.env.VITE_API_URL ||
+    (import.meta.env.PROD
+      ? 'https://portfolio-six-zeta-ymb8holpt6.vercel.app'
+      : 'http://localhost:3000');
   
   // Smooth animations
   const titleRef = useSmoothAnimation({ threshold: 0.3 });
