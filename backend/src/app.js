@@ -1,6 +1,6 @@
 import express from "express";
-import messageRoutes from "./src/routes/message.routes.js";
-import otpRoutes from "./src/routes/otpRoutes.js";
+import messageRoutes from "./routes/message.routes.js";
+import otpRoutes from "./routes/otpRoutes.js";
 
 const app = express();
 
