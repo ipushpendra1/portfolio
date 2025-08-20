@@ -7,8 +7,8 @@ const app = express();
 
 const allowedOrigins = [
    "http://localhost:5173",
+   "https://ipushpendra.netlify.app",
    "https://ipushpendra.netlify.app/"
- 
 ];
 
 const corsOptions = {
@@ -21,6 +21,17 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.use(express.json());
+
+// Test endpoint for debugging
+app.get("/test", (req, res) => {
+  res.json({
+    message: "Backend is working",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    emailConfigured: !!(process.env.EMAIL_USER && process.env.EMAIL_PASS),
+    corsOrigins: allowedOrigins
+  });
+});
 
 // routes
 app.use("/", messageRoutes);

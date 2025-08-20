@@ -8,6 +8,15 @@ export const generateOtp = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: "Email is required" });
 
+    // Check if email environment variables are set
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error("Email configuration missing:", {
+        EMAIL_USER: !!process.env.EMAIL_USER,
+        EMAIL_PASS: !!process.env.EMAIL_PASS
+      });
+      return res.status(500).json({ error: "Email service not configured" });
+    }
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min expiry
 
@@ -22,13 +31,19 @@ export const generateOtp = async (req, res) => {
     res.json({ message: "OTP sent successfully" });
   } catch (err) {
     console.error("Error generating OTP:", err);
-    res.status(500).json({ error: "Could not send OTP" });
+    res.status(500).json({ error: "Could not send OTP", details: err.message });
   }
 };
 
 // POST /verify-otp
 export const verifyOtp = async (req, res) => {
+  try {
     const { email, otp } = req.body;
+    
+    if (!email || !otp) {
+      return res.status(400).json({ error: "Email and OTP are required" });
+    }
+    
     const record = await OTP.findOne({ email, otp });
   
     if (!record) {
@@ -45,5 +60,9 @@ export const verifyOtp = async (req, res) => {
     await sendOTPEmail(email, "Your OTP is verified successfully! 🎉");
   
     res.json({ message: "OTP verified successfully" });
-  };
+  } catch (err) {
+    console.error("Error verifying OTP:", err);
+    res.status(500).json({ error: "Could not verify OTP", details: err.message });
+  }
+};
   

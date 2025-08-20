@@ -67,6 +67,8 @@ const Contact = () => {
     // Step 1: Generate OTP
     try {
       setIsGenerating(true);
+      console.log('Sending OTP request to:', `${API_BASE_URL}/generate-otp`);
+      
       const response = await fetch(`${API_BASE_URL}/generate-otp`, {
         method: 'POST',
         headers: {
@@ -77,10 +79,17 @@ const Contact = () => {
         })
       });
 
+      console.log('OTP response status:', response.status);
+      console.log('OTP response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error?.error || error?.message || 'Failed to generate OTP');
+        console.error('OTP generation error:', error);
+        throw new Error(error?.error || error?.message || error?.details || 'Failed to generate OTP');
       }
+
+      const result = await response.json();
+      console.log('OTP generation success:', result);
 
       setPendingPayload({
         Name: name,
@@ -90,6 +99,7 @@ const Contact = () => {
       });
       setAwaitingOtp(true);
     } catch (err) {
+      console.error('OTP generation failed:', err);
       alert(err.message || 'Could not send OTP. Please try again later.');
     } finally {
       setIsGenerating(false);
@@ -106,6 +116,8 @@ const Contact = () => {
 
     try {
       setIsVerifying(true);
+      console.log('Verifying OTP for email:', pendingPayload.Email);
+      
       // Step 2: Verify OTP
       const verifyRes = await fetch(`${API_BASE_URL}/verify-otp`, {
         method: 'POST',
@@ -118,12 +130,20 @@ const Contact = () => {
         })
       });
 
+      console.log('OTP verification response status:', verifyRes.status);
+
       if (!verifyRes.ok) {
         const error = await verifyRes.json().catch(() => ({}));
-        throw new Error(error?.error || error?.message || 'OTP verification failed');
+        console.error('OTP verification error:', error);
+        throw new Error(error?.error || error?.message || error?.details || 'OTP verification failed');
       }
 
+      const verifyResult = await verifyRes.json();
+      console.log('OTP verification success:', verifyResult);
+
       // Step 3: Send the message after successful OTP verification
+      console.log('Sending message with payload:', pendingPayload);
+      
       const sendRes = await fetch(`${API_BASE_URL}/send-message`, {
         method: 'POST',
         headers: {
@@ -132,10 +152,16 @@ const Contact = () => {
         body: JSON.stringify(pendingPayload)
       });
 
+      console.log('Message send response status:', sendRes.status);
+
       if (!sendRes.ok) {
         const error = await sendRes.json().catch(() => ({}));
-        throw new Error(error?.message || 'Failed to send message');
+        console.error('Message send error:', error);
+        throw new Error(error?.message || error?.error || 'Failed to send message');
       }
+
+      const sendResult = await sendRes.json();
+      console.log('Message send success:', sendResult);
 
       alert('Message sent successfully!');
       // Reset state
@@ -148,6 +174,7 @@ const Contact = () => {
         form && form.reset && form.reset();
       }
     } catch (err) {
+      console.error('Verification/send process failed:', err);
       alert(err.message || 'Something went wrong. Please try again later.');
     } finally {
       setIsVerifying(false);

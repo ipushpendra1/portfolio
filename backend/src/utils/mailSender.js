@@ -19,30 +19,43 @@ const transporter = nodemailer.createTransport({
   
 
   export async function sendOTPEmail(to, otp) {
-    return transporter.sendMail({
-      from: `"ipushpendra" <${process.env.EMAIL_USER}>`,
-      to,
-      subject: "🔐 Your Secure OTP Code",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9;">
-          <h2 style="color: #333;">Hello 👋</h2>
-          <p style="font-size: 16px; color: #555;">
-            We received a request to verify your email address. Please use the OTP below to complete the process:
-          </p>
-          <div style="text-align: center; margin: 30px 0;">
-            <span style="font-size: 28px; font-weight: bold; color: #2c7be5; letter-spacing: 3px;">
-              ${otp}
-            </span>
+    try {
+      // Verify transporter is configured
+      if (!transporter) {
+        throw new Error("Email transporter not configured");
+      }
+
+      const result = await transporter.sendMail({
+        from: `"ipushpendra" <${process.env.EMAIL_USER}>`,
+        to,
+        subject: "🔐 Your Secure OTP Code",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9;">
+            <h2 style="color: #333;">Hello 👋</h2>
+            <p style="font-size: 16px; color: #555;">
+              We received a request to verify your email address. Please use the OTP below to complete the process:
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <span style="font-size: 28px; font-weight: bold; color: #2c7be5; letter-spacing: 3px;">
+                ${otp}
+              </span>
+            </div>
+            <p style="font-size: 14px; color: #777;">
+              ⚠️ This OTP is valid for <b>5 minutes</b>. Please do not share it with anyone.
+            </p>
+            <hr style="margin: 20px 0;" />
+            <p style="font-size: 12px; color: #999;">
+              This is an automated message from <b>ipushpendra</b>. If you did not request this, please ignore this email.
+            </p>
           </div>
-          <p style="font-size: 14px; color: #777;">
-            ⚠️ This OTP is valid for <b>10 minutes</b>. Please do not share it with anyone.
-          </p>
-          <hr style="margin: 20px 0;" />
-          <p style="font-size: 12px; color: #999;">
-            This is an automated message from <b>ipushpendra</b>. If you did not request this, please ignore this email.
-          </p>
-        </div>
-      `,
-    });
+        `,
+      });
+      
+      console.log("Email sent successfully to:", to);
+      return result;
+    } catch (error) {
+      console.error("Error sending email:", error);
+      throw error;
+    }
   }
   

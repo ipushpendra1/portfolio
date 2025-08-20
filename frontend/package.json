@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "build": "^0.1.4",
     "devicon": "^2.17.0",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.539.0",
